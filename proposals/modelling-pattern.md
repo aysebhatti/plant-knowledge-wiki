@@ -38,18 +38,24 @@ nothing and, for the first time, makes "give me biosynthesis pathways
 specifically" a directly answerable SPARQL query instead of needing the
 indirect P2410/P527 heuristics this project's own queries had to build.
 
-### 3. Don't put a bare compound directly behind `has part(s)` (P527) as the compound -> pathway link
+### 3. Disambiguate `has part(s)` (P527) with a role qualifier, rather than assuming a brand-new property is the only fix
 
 P527 is confirmed overloaded (gap analysis: P527 backlinks on a compound
 mix real pathway membership with plain chemical composition facts like
-"ammonia is part of ammonia solution"). Reserve P527 for what WikiPathways
-pathways already use it for (listing a pathway's reaction
-participants/parts). The compound -> pathway *biosynthesis* link should
-use the new property proposed in Objective 5 (see
-[`property-proposal-plantmetwiki-id.md`](property-proposal-plantmetwiki-id.md)
-for the identifier side; the relational compound -> pathway property
-itself is the larger, harder property proposal this project flags as
-future work rather than resolves here - see "What's left" below).
+"ammonia is part of ammonia solution"). The lightest-weight fix found:
+qualify the existing P527 statement with `object of statement has role`
+(P3831) - e.g. role = `substrate` (Q12119506) or `reaction intermediate`
+(Q7458208) - rather than inventing a new base property. This needs no
+property proposal at all, since P3831 and the role items already exist;
+it's a usage-convention question, not a schema change.
+
+Whether the chain *also* needs a genuinely new property, stated from the
+compound's side (matching the project's original chain-table framing of
+"natural product -[produced by]-> pathway"), is a larger, harder design
+question this project surfaces but deliberately leaves open. See
+[`pathway-representation-proposal.md`](pathway-representation-proposal.md)
+for the full reflection on both options, and why this project is not
+pursuing either as a live submission right now.
 
 ### 4. Qualifier set for every organism-specific participation statement
 
@@ -91,23 +97,31 @@ on Wikidata - see "What's a design, not an edit" below):
 ```
 Item: "caffeine biosynthesis"  [NEW ITEM]
   instance of -> biosynthetic pathway (Q70696303)
-
-Item: theobromine (Q206844, existing compound)
-  [new property from Objective 5] participates in -> caffeine biosynthesis
+  has part(s) -> theobromine (Q206844, existing compound)
+    qualifier: object of statement has role -> reaction intermediate (Q7458208)
     qualifier: found in taxon -> Coffea arabica (Q47685)
     qualifier: stated in -> [source publication per species]
 
-  [same statement, different taxon qualifier - same pathway item, same
-   compound, different organism and potentially different enzyme/gene
-   downstream]
-  [new property] participates in -> caffeine biosynthesis
+  [same base statement, different taxon qualifier - same pathway item,
+   same compound, different organism and potentially different
+   enzyme/gene downstream]
+  has part(s) -> theobromine
+    qualifier: object of statement has role -> reaction intermediate
     qualifier: found in taxon -> Camellia sinensis (Q101815)
     qualifier: stated in -> [source publication]
 
-  [new property] participates in -> caffeine biosynthesis
+  has part(s) -> theobromine
+    qualifier: object of statement has role -> reaction intermediate
     qualifier: found in taxon -> Theobroma cacao (Q42385)
     qualifier: stated in -> [source publication]
 ```
+
+(Using decision 3's lighter-weight option - `has part(s)` + a role
+qualifier - rather than assuming a new relational property. If a
+dedicated compound -> pathway property is created later instead or in
+addition, see
+[`pathway-representation-proposal.md`](pathway-representation-proposal.md)'s
+"Open question" for how that would change this example.)
 
 The point this example makes concrete: the *compound* and *pathway* nodes
 are shared across all three species (correctly - it's the same
@@ -120,13 +134,14 @@ different enzymes catalyze this in each plant.
 ## Worked example B: a real PlantMetWiki pathway with no Wikidata counterpart yet
 
 Verified live against PlantMetWiki's SPARQL endpoint (2026-11-21, see
-[`property-proposal-plantmetwiki-id.md`](property-proposal-plantmetwiki-id.md)):
+[`pathway-representation-proposal.md`](pathway-representation-proposal.md)):
 `PC1001` = "nicotine biosynthesis", one of PlantMetWiki's 1,162 curated
 plant metabolic pathways. Searching Wikidata (`wbsearchentities`) finds no
 "nicotine biosynthesis" pathway item either - this is a second, concrete,
-verified case of the same gap as Example A, not a hypothetical one. Once
-the PlantMetWiki ID property (Objective 5) exists, a new "nicotine
-biosynthesis" item under this pattern would carry:
+verified case of the same gap as Example A, not a hypothetical one. If
+the PlantMetWiki pathway ID property sketched in that reflection is ever
+created, a new "nicotine biosynthesis" item under this pattern would
+carry:
 
 ```
 Item: "nicotine biosynthesis"  [NEW ITEM]
@@ -172,22 +187,23 @@ organism-independent process terms.
   unusual.
 - **Mereology/"has part" flagged as unfinished (Week 7):** decision 3
   (stop overloading P527) continues this acknowledged open problem.
-- **Property-proposal workflow (Week 2):** followed directly in
-  [`property-proposal-plantmetwiki-id.md`](property-proposal-plantmetwiki-id.md).
+- **Property-proposal workflow (Week 2):** the workflow itself (propose
+  -> discuss -> "ready" -> create) is documented and followed in
+  [`pathway-representation-proposal.md`](pathway-representation-proposal.md),
+  even though this project has chosen not to actually submit yet.
 
 ## What's a design, not an edit
 
 Nothing in this document has been written to live Wikidata. Creating the
-"caffeine biosynthesis" or "nicotine biosynthesis" items, adding the new
-compound -> pathway property's statements, or editing the GO glucosinolate
+"caffeine biosynthesis" or "nicotine biosynthesis" items, adding the
+`has part(s)` + role-qualifier statements, or editing the GO glucosinolate
 item are all real, public, permanent actions on a shared knowledge base -
-appropriately done deliberately, under a project participant's own
-account, likely after the property proposal (Deliverable 4) is actually
-approved (the new property doesn't exist yet, so Examples A and B's
-`participates in` statements can't be created as shown until it does).
-This document satisfies Deliverable 3 (the pattern + worked examples) and
-sketches what Deliverable 5's optional pilot would look like; actually
-carrying out Deliverable 5 is a follow-on action, not completed here.
+deliberately not taken here. This is a project decision (see
+[`pathway-representation-proposal.md`](pathway-representation-proposal.md)'s
+status note), not a blocked or pending step. This document satisfies
+Deliverable 3 (the pattern + worked examples) and sketches what
+Deliverable 5's optional pilot would look like; actually carrying out
+Deliverable 5 would be a separate, later decision.
 
 ## What's left
 

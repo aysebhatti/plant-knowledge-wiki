@@ -29,14 +29,17 @@ The chain this project is trying to fill in:
 - [`queries/`](queries/) - reusable SPARQL queries (coverage/gap queries,
   pilot queries) for the Wikidata Query Service.
 - [`analysis/`](analysis/) - gap analysis write-up and findings from running
-  the queries.
+  the queries, plus a [course-connections summary](analysis/course-connections-summary.md)
+  tying findings to specific weeks of the Ontology Course.
 - [`notebooks/`](notebooks/) - Jupyter notebook(s) that re-run the queries
   and chart the results (visualizations, added from course reviewer
   feedback). See [Running the notebooks](#running-the-notebooks) below.
 - [`proposals/`](proposals/) - the [modelling pattern](proposals/modelling-pattern.md)
-  (with worked examples) and a ready-to-submit
-  [property proposal draft](proposals/property-proposal-plantmetwiki-id.md)
-  for a PlantMetWiki pathway ID property.
+  (with worked examples) and a
+  [chain-representation reflection](proposals/pathway-representation-proposal.md)
+  (a PlantMetWiki pathway ID property sketch, plus a lighter-weight
+  role-qualifier option - not submitted or implemented; see that file's
+  status note).
 - [`data/`](data/) - crosswalk tables against PlantMetWiki, WikiPathways,
   ChEBI, Plant Ontology, Rhea, EC (not started yet).
 
@@ -70,12 +73,15 @@ visualizations) have a first draft:
 3. **Modelling pattern** - [`proposals/modelling-pattern.md`](proposals/modelling-pattern.md):
    5 design decisions and 3 worked examples (none implemented on live
    Wikidata yet - see that file's "What's a design, not an edit" section).
-4. **Property proposal** - [`proposals/property-proposal-plantmetwiki-id.md`](proposals/property-proposal-plantmetwiki-id.md):
-   a complete, ready-to-submit draft for a PlantMetWiki pathway ID
-   property (not yet posted to Wikidata:Property proposal - see that
-   file's "Before submitting" section).
+4. **Property proposal / chain-representation reflection** -
+   [`proposals/pathway-representation-proposal.md`](proposals/pathway-representation-proposal.md):
+   a PlantMetWiki pathway ID property sketch, plus a lighter-weight
+   role-qualifier alternative that needs no new property at all. By
+   project decision, **not submitted** to Wikidata:Property proposal and
+   no community discussion has been opened.
 5. **Pilot** (optional) - designed as worked examples in the modelling
-   pattern document; not yet executed as live edits.
+   pattern document; by project decision, **not implemented** as live
+   Wikidata edits.
 6. **Visualizations** (added from reviewer feedback) - [`notebooks/gap_visualizations.ipynb`](notebooks/gap_visualizations.ipynb).
 
 Still open: the crosswalk to PlantMetWiki/ChEBI/Plant Ontology/Rhea/EC

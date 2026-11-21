@@ -77,6 +77,17 @@ metabolic pathway entity for caffeine itself.
 
 *(Chart and category breakdown from [`notebooks/gap_visualizations.ipynb`](../notebooks/gap_visualizations.ipynb); the category for each item is a manual classification recorded in the notebook, not an automated inference.)*
 
+The chart above shows *what kind of noise* fills the gap. The diagram
+below traces caffeine through the actual chain, stage by stage, for the
+three species that produce it - all independently re-verified live
+(2026-11-21): caffeine is confirmed `found in taxon` for all three, and
+every stage after that is confirmed absent for all three (queries 04, 06,
+07, above).
+
+![Chain diagram tracing caffeine through compound-pathway-enzyme-gene-genome for coffee, tea and cacao](../notebooks/caffeine_chain_diagram.png)
+
+*(Diagram from [`notebooks/gap_visualizations.ipynb`](../notebooks/gap_visualizations.ipynb).)*
+
 ## Qualifier usage: currently zero
 
 Query: [`05_qualifier_usage_survey.rq`](../queries/05_qualifier_usage_survey.rq)
@@ -300,8 +311,10 @@ candidates. Queried its live SPARQL endpoint
 - Checked Wikidata for an existing "PlantMetWiki" or "PlantCyc" property:
   none exists.
 
-See [`proposals/property-proposal-plantmetwiki-id.md`](../proposals/property-proposal-plantmetwiki-id.md)
-for the resulting draft.
+See [`proposals/pathway-representation-proposal.md`](../proposals/pathway-representation-proposal.md)
+for the full reflection this fed into - framed around representing the
+whole chain, not just this one identifier, and explicitly not submitted
+or implemented (project decision).
 
 ## Still open / not yet checked
 
