@@ -30,9 +30,26 @@ The chain this project is trying to fill in:
   pilot queries) for the Wikidata Query Service.
 - [`analysis/`](analysis/) - gap analysis write-up and findings from running
   the queries.
+- [`notebooks/`](notebooks/) - Jupyter notebook(s) that re-run the queries
+  and chart the results (visualizations, added from course reviewer
+  feedback). See [Running the notebooks](#running-the-notebooks) below.
 - [`proposals/`](proposals/) - drafts for new Wikidata property proposals.
 - [`data/`](data/) - crosswalk tables against PlantMetWiki, WikiPathways,
   ChEBI, Plant Ontology, Rhea, EC.
+
+## Running the notebooks
+
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+jupyter nbconvert --to notebook --execute --inplace notebooks/gap_visualizations.ipynb
+# or: jupyter notebook notebooks/gap_visualizations.ipynb
+```
+
+The notebook re-runs the `.rq` files in `queries/` live against the
+Wikidata Query Service, so its charts reflect current data, not a cached
+snapshot.
 
 ## Status
 
