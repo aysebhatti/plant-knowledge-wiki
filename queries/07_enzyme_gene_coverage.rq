@@ -1,0 +1,53 @@
+# Objective 1: coverage of the "pathway -> enzyme -> gene" legs of the
+# chain. Within the genuine (P2410) pathways linked to compounds found in
+# each of the 6 species from query 03, how many of the pathway's P527
+# parts are actually typed as an enzyme (Q8047), and of those, how many
+# have an `encoded by` (P702) gene link?
+#
+# Run at https://query.wikidata.org/. Result (run 2026-11-21): across ALL
+# SIX species combined, only 3 genuine pathways contain any item typed as
+# an enzyme at all, and there is exactly ONE distinct enzyme-typed item in
+# total: "M-phase inducer phosphatase" (Q3775177) - a human cell-cycle
+# enzyme, unrelated to plant biosynthesis. It has ZERO `encoded by` (P702)
+# gene link.
+#
+# Reading: the pathway -> enzyme -> gene legs of the chain aren't just
+# sparse for plants - for the pathways actually reachable from
+# plant-found compounds, they are effectively empty. This is consistent
+# with queries 01/03's finding that the "genes" attached to these
+# pathways via P527 are typically typed directly as genes (Q7187), not
+# reached via a distinct enzyme entity at all - i.e. the
+# pathway -P527-> enzyme -P702-> gene chain the project proposal
+# describes mostly doesn't exist in the data; what exists instead is a
+# flatter (and non-taxon-specific - see the gap analysis) pathway -P527-> gene link.
+
+SELECT (COUNT(DISTINCT ?pathway) AS ?realPathwaysWithAnyEnzyme)
+       (COUNT(DISTINCT ?enzyme) AS ?enzymeTypedParts)
+WHERE {
+  VALUES ?taxon {
+    wd:Q158695   # Arabidopsis thaliana
+    wd:Q101815   # Camellia sinensis (tea)
+    wd:Q47685    # Coffea arabica (coffee)
+    wd:Q42385    # Theobroma cacao (cacao)
+    wd:Q146212   # Brassica oleracea
+    wd:Q3384     # Brassica rapa
+  }
+  ?compound wdt:P703 ?taxon .
+  ?pathway wdt:P2410 ?wpid .
+  ?pathway wdt:P527 ?compound .
+  ?pathway wdt:P527 ?enzyme .
+  ?enzyme wdt:P31 wd:Q8047 .   # instance of enzyme
+}
+
+# Follow-up (run separately): does that one enzyme have a gene link?
+#
+# SELECT DISTINCT ?enzyme ?enzymeLabel ?gene ?geneLabel WHERE {
+#   VALUES ?taxon { wd:Q158695 wd:Q101815 wd:Q47685 wd:Q42385 wd:Q146212 wd:Q3384 }
+#   ?compound wdt:P703 ?taxon .
+#   ?pathway wdt:P2410 ?wpid .
+#   ?pathway wdt:P527 ?compound .
+#   ?pathway wdt:P527 ?enzyme .
+#   ?enzyme wdt:P31 wd:Q8047 .
+#   OPTIONAL { ?enzyme wdt:P702 ?gene . }
+#   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+# }

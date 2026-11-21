@@ -33,9 +33,12 @@ The chain this project is trying to fill in:
 - [`notebooks/`](notebooks/) - Jupyter notebook(s) that re-run the queries
   and chart the results (visualizations, added from course reviewer
   feedback). See [Running the notebooks](#running-the-notebooks) below.
-- [`proposals/`](proposals/) - drafts for new Wikidata property proposals.
+- [`proposals/`](proposals/) - the [modelling pattern](proposals/modelling-pattern.md)
+  (with worked examples) and a ready-to-submit
+  [property proposal draft](proposals/property-proposal-plantmetwiki-id.md)
+  for a PlantMetWiki pathway ID property.
 - [`data/`](data/) - crosswalk tables against PlantMetWiki, WikiPathways,
-  ChEBI, Plant Ontology, Rhea, EC.
+  ChEBI, Plant Ontology, Rhea, EC (not started yet).
 
 ## Running the notebooks
 
@@ -53,9 +56,29 @@ snapshot.
 
 ## Status
 
-Started: initial SPARQL queries written and run against the live Wikidata
-Query Service; first gap numbers recorded in
-[`analysis/gap-analysis.md`](analysis/gap-analysis.md). See that file for
-current findings, including confirmed modelling issues (P527 overloading,
-inconsistent compound class hierarchy, lack of taxon-specificity in
-pathway/gene data).
+All five proposal deliverables (plus the reviewer-suggested
+visualizations) have a first draft:
+
+1. **SPARQL queries** - 7 queries in [`queries/`](queries/) covering the
+   full compound -> pathway -> enzyme -> gene -> genome chain across 6
+   species.
+2. **Gap analysis report** - [`analysis/gap-analysis.md`](analysis/gap-analysis.md):
+   coverage figures, confirmed modelling issues (P527 overloading, two
+   incompatible pathway conventions, zero qualifier usage, non-taxon-
+   specific pathway/gene data), and an empirically-confirmed case study
+   (caffeine in coffee/tea/cacao).
+3. **Modelling pattern** - [`proposals/modelling-pattern.md`](proposals/modelling-pattern.md):
+   5 design decisions and 3 worked examples (none implemented on live
+   Wikidata yet - see that file's "What's a design, not an edit" section).
+4. **Property proposal** - [`proposals/property-proposal-plantmetwiki-id.md`](proposals/property-proposal-plantmetwiki-id.md):
+   a complete, ready-to-submit draft for a PlantMetWiki pathway ID
+   property (not yet posted to Wikidata:Property proposal - see that
+   file's "Before submitting" section).
+5. **Pilot** (optional) - designed as worked examples in the modelling
+   pattern document; not yet executed as live edits.
+6. **Visualizations** (added from reviewer feedback) - [`notebooks/gap_visualizations.ipynb`](notebooks/gap_visualizations.ipynb).
+
+Still open: the crosswalk to PlantMetWiki/ChEBI/Plant Ontology/Rhea/EC
+(Objective 2, [`data/`](data/) is still empty) and federated queries
+against PlantMetWiki/WikiPathways directly (as opposed to querying
+Wikidata's local copies of their IDs).

@@ -1,0 +1,31 @@
+# Objective 4: "Measure how widely these qualifiers are used today."
+# For every genuine (P2410) pathway-compound link (P527) across the 6
+# species from query 03, check whether that specific P527 statement
+# carries ANY qualifier at all - taxon (P703), anatomical location
+# (P927), determination method (P459), or anything else.
+#
+# Run at https://query.wikidata.org/. Result (run 2026-11-21): ZERO rows.
+# Not one of these statements carries a single qualifier of any kind.
+#
+# Reading: Objective 4's qualifier pattern isn't competing with an
+# existing-but-inconsistent qualifier usage - it would be introducing
+# qualifiers to a part of the graph that currently has none at all.
+
+SELECT ?qualProp (COUNT(*) AS ?n) WHERE {
+  VALUES ?taxon {
+    wd:Q158695   # Arabidopsis thaliana
+    wd:Q101815   # Camellia sinensis (tea)
+    wd:Q47685    # Coffea arabica (coffee)
+    wd:Q42385    # Theobroma cacao (cacao)
+    wd:Q146212   # Brassica oleracea
+    wd:Q3384     # Brassica rapa
+  }
+  ?compound wdt:P703 ?taxon .
+  ?pathway wdt:P2410 ?wpid .
+  ?pathway p:P527 ?stmt .
+  ?stmt ps:P527 ?compound .
+  ?stmt ?qualProp ?qualVal .
+  FILTER(STRSTARTS(STR(?qualProp), "http://www.wikidata.org/prop/qualifier/"))
+}
+GROUP BY ?qualProp
+ORDER BY DESC(?n)

@@ -77,6 +77,64 @@ metabolic pathway entity for caffeine itself.
 
 *(Chart and category breakdown from [`notebooks/gap_visualizations.ipynb`](../notebooks/gap_visualizations.ipynb); the category for each item is a manual classification recorded in the notebook, not an automated inference.)*
 
+## Qualifier usage: currently zero
+
+Query: [`05_qualifier_usage_survey.rq`](../queries/05_qualifier_usage_survey.rq)
+Run 2026-11-21. Objective 4 asks to "measure how widely these qualifiers
+are used today" (P703, P927, P459, P659, P248 as qualifiers on the
+compound-pathway/enzyme link). Checked every genuine P527 statement
+between a genuine pathway and a compound found in one of the 6 species
+from the coverage table above.
+
+**Result: zero.** Not one of these statements carries *any* qualifier at
+all, let alone the specific ones Objective 4 names.
+
+**Reading:** the qualifier pattern isn't competing with inconsistent
+existing usage - it would be the first qualifier usage on this part of
+the graph at all. That's a cleaner, lower-risk starting point for the
+modelling pattern (Objective 4/6): no existing qualifier conventions to
+reconcile with or migrate away from.
+
+## Gene -> genome coverage: empty beyond Arabidopsis, and empty there too
+
+Query: [`06_gene_genome_coverage.rq`](../queries/06_gene_genome_coverage.rq)
+Run 2026-11-21.
+
+| Taxon | genes (instance of gene + found in taxon) | ...with genomic start+end (P644/P645) |
+|---|---|---|
+| Arabidopsis thaliana | 28 | 0 |
+| Camellia sinensis (tea) | 0 | 0 |
+| Coffea arabica (coffee) | 0 | 0 |
+| Theobroma cacao (cacao) | 0 | 0 |
+| Brassica oleracea | 0 | 0 |
+| Brassica rapa | 0 | 0 |
+
+**Reading:** confirms the project proposal's own claim - plant genes are
+"sparse and mostly limited to *Arabidopsis thaliana*" - and goes further:
+Arabidopsis's own 28 genes have **zero** genomic positions between them.
+The gene -> genome leg isn't just rare for plants; in this sample it's
+empty, full stop.
+
+## Enzyme -> gene coverage: effectively empty too
+
+Query: [`07_enzyme_gene_coverage.rq`](../queries/07_enzyme_gene_coverage.rq)
+Run 2026-11-21. Within the genuine pathways reachable from compounds found
+in the 6 species, how many P527 parts are actually typed as an enzyme
+(Q8047), and do they have an `encoded by` (P702) gene?
+
+Across all six species combined: only 3 genuine pathways contain *any*
+enzyme-typed item, and there is exactly **one** distinct enzyme-typed item
+in total - "M-phase inducer phosphatase" (Q3775177), a human cell-cycle
+enzyme with no connection to plant biosynthesis - and it has **zero**
+P702 gene link.
+
+**Reading:** combined with the earlier finding that pathway-linked "genes"
+are typically reached directly via P527 (not through a distinct enzyme
+entity), this suggests the `pathway -P527-> enzyme -P702-> gene` chain the
+project describes mostly doesn't exist as data yet; what little gene data
+there is sits one hop closer (`pathway -P527-> gene` directly), still with
+no taxon qualification (see above).
+
 ## Modelling issue: P527 ("has part(s)") is overloaded
 
 Query: [`01_arabidopsis_lotus_pathway_gene.rq`](../queries/01_arabidopsis_lotus_pathway_gene.rq)
@@ -124,6 +182,48 @@ the gap the qualifier pattern (Objective 4) and the caffeine example on
 the project page are about: biosynthesis is taxon-specific, and Wikidata's
 current pathway/gene data mostly isn't.
 
+## Modelling issue: two incompatible pathway conventions, and an unused class that would fix it
+
+Checked 2026-11-21, prompted while picking a pilot example for the
+modelling pattern (Objective 6). Wikidata currently has two different,
+non-interoperable ways of representing "pathway-like" things:
+
+1. **WikiPathways-style pathways** (what queries 02-07 use): `instance of`
+   "biological pathway" (Q4915012), carry a WikiPathways ID (P2410), and
+   list reaction participants via `has part(s)` (P527). This is what TCA
+   cycle, the caffeine/theobromine metabolism pathway, etc. use.
+2. **Gene Ontology process terms**: e.g. "glucosinolate biosynthetic
+   process" (Q22274797, imported from GO:0019761) is `instance of`
+   "biological process" - a completely different class - and reached via
+   `subclass of` hierarchies, not WikiPathways IDs. It does use `has
+   part(s)` (P527) to list the compound (glucosinolate), but has no genes,
+   no enzymes, and no taxon - it is a generic, organism-independent
+   process description.
+
+These two conventions don't share a type, so a SPARQL query (like ours)
+written for one silently misses the other. For *A. thaliana*'s own
+glucosinolates specifically, the only pathway-shaped entity Wikidata has
+is the GO-style process term, not a WikiPathways-style one.
+
+**A usable fix already exists in the ontology and is unused:**
+"biosynthetic pathway" (Q70696303) is `subclass of` both "biological
+pathway" and "metabolic pathway" - exactly the right place in the
+hierarchy for this project's domain - but **zero items** use it
+(`?item wdt:P31 wd:Q70696303` returns 0 rows). Every real pathway item
+just uses the generic parent "biological pathway" directly. This is a
+concrete, low-effort fix: new biosynthesis-pathway items created under
+Objective 6's pilot should be typed `instance of biosynthetic pathway`
+(Q70696303) specifically, not the generic class - which would also, for
+the first time, make "give me biosynthetic pathways specifically" a
+answerable SPARQL question instead of requiring the P2410 workaround.
+
+(Side finding: `?pathway wdt:P31 wd:Q4915012 ; wdt:P527 ?compound` returns
+almost the same compound set as the P2410-based filter used in queries
+02-07 - 193 vs 190 compounds, 190 overlapping, across the 6 species - so
+`instance of biological pathway` is at least as reliable a "genuine
+pathway" filter as the WikiPathways-ID heuristic, and more semantically
+direct. Worth switching to as the primary filter in any future query.)
+
 ## Connections to the Ontology Course material
 
 The course's own weekly slides (`slides_course/`) turn out to cover several
@@ -170,6 +270,39 @@ as isolated observations. (Checked 2026-11-21.)
   for Objective 5 and for where to take the LOTUS external-ID proposal
   for review and after the course ends.
 
+## Property proposal candidate: LOTUS ID doesn't work, PlantMetWiki ID does
+
+Checked 2026-11-21, while scoping Objective 5's property proposal (the
+course reviewer suggested starting with a LOTUS external-ID property,
+since external identifiers are easier to get approved than relational
+properties).
+
+**LOTUS does not have its own external identifier to propose a property
+for.** LOTUS describes itself as doing "knowledge management *through*
+Wikidata" - its structure-organism pair data lives directly in Wikidata
+as `found in taxon` (P703) statements referenced to source literature,
+not in a separate database with its own stable per-record IDs. A "LOTUS
+ID" property would have nothing external to point to.
+
+**PlantMetWiki does work**, and is already one of Objective 5's own listed
+candidates. Queried its live SPARQL endpoint
+(plantmetwiki.bioinformatics.nl) directly:
+- 1,162 pathway items use a stable `PC<number>` identifier (e.g. `PC1001`
+  = "nicotine biosynthesis", a real plant biosynthesis pathway) - this
+  number matches the 1,162 plant metabolic pathways figure from the
+  PlantMetWiki preprint itself.
+- A separate 1,316 items use an `RC<number>` identifier (not used for the
+  property proposal below - likely a reaction/sub-pathway grouping, not
+  confirmed).
+- `https://plantmetwiki.bioinformatics.nl/pathways/PC1000` resolves (HTTP
+  303 to a live SPARQL-backed record view) - confirming `PC<number>` is
+  the stable, resolvable identifier, not an artifact of one RDF release.
+- Checked Wikidata for an existing "PlantMetWiki" or "PlantCyc" property:
+  none exists.
+
+See [`proposals/property-proposal-plantmetwiki-id.md`](../proposals/property-proposal-plantmetwiki-id.md)
+for the resulting draft.
+
 ## Still open / not yet checked
 
 - `stated in` (P248) does **not** point to Q104225190 ("LOTUS, natural
@@ -183,9 +316,8 @@ as isolated observations. (Checked 2026-11-21.)
   not started.
 - Federated queries against PlantMetWiki/WikiPathways (as opposed to just
   querying Wikidata's local copies of WikiPathways IDs) - not started.
-- Qualifier usage survey (Objective 4 explicitly asks to "measure how
-  widely these qualifiers are used today": P703, P927, P459, P659, P248) -
-  not started yet; needed to round out deliverable 2.
-- Enzyme -> gene (P702) and gene -> genome assembly (P644/P645 + P659)
-  coverage, for the rest of the chain beyond compound -> pathway - not
-  measured yet.
+- The full chain (compound -> pathway -> enzyme -> gene -> genome) has now
+  been measured end to end across 6 species (queries 02-07, above). The
+  remaining open piece of Objective 1/3 is breadth, not depth: everything
+  so far covers 6 species chosen for their relevance to the project's own
+  examples, not a random or representative sample.
