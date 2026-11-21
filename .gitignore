@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Personal course lecture material - not project deliverable content.
+# Remove this line if you want it tracked in the repo.
+slides_course/

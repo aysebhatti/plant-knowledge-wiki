@@ -1,0 +1,45 @@
+# Objective 1: coverage of the "gene -> genome" leg of the chain
+# (genomic start (P644) / genomic end (P645), qualified by genomic
+# assembly P659) for genes found in each of the 6 species from query 03.
+#
+# Run at https://query.wikidata.org/. Results (run 2026-11-21):
+#
+# | Taxon                  | genes typed Q7187 + P703 | ...with P644+P645 |
+# |--------------------------|--------------------------|---------------------|
+# | Arabidopsis thaliana      | 28                        | 0                    |
+# | Camellia sinensis (tea)   | 0                         | 0                    |
+# | Coffea arabica (coffee)   | 0                         | 0                    |
+# | Theobroma cacao (cacao)   | 0                         | 0                    |
+# | Brassica oleracea         | 0                         | 0                    |
+# | Brassica rapa             | 0                         | 0                    |
+#
+# Reading: confirms the project proposal's own claim verbatim - "plant
+# genes are sparse and mostly limited to Arabidopsis thaliana" - and goes
+# further: even for Arabidopsis, which has the only non-zero gene count
+# of the six, NONE of its 28 genes carry a genomic position at all. The
+# gene -> genome leg of the chain is not just "rare for plants", it is
+# empty for every species checked so far.
+
+SELECT ?taxon ?taxonLabel
+       (COUNT(DISTINCT ?gene) AS ?genesTotal)
+       (COUNT(DISTINCT ?geneWithPos) AS ?genesWithGenomicPosition)
+WHERE {
+  VALUES ?taxon {
+    wd:Q158695   # Arabidopsis thaliana
+    wd:Q101815   # Camellia sinensis (tea)
+    wd:Q47685    # Coffea arabica (coffee)
+    wd:Q42385    # Theobroma cacao (cacao)
+    wd:Q146212   # Brassica oleracea
+    wd:Q3384     # Brassica rapa
+  }
+  ?gene wdt:P31 wd:Q7187 ;   # instance of gene
+        wdt:P703 ?taxon .
+  OPTIONAL {
+    ?gene wdt:P644 ?start .
+    ?gene wdt:P645 ?end .
+    BIND(?gene AS ?geneWithPos)
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+GROUP BY ?taxon ?taxonLabel
+ORDER BY ?taxonLabel

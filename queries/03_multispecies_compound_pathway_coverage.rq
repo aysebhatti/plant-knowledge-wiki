@@ -1,0 +1,57 @@
+# Deliverable 1 / Objective 1 (domain survey): same coverage metric as
+# query 02, but across several plant species instead of just Arabidopsis,
+# to check whether the gap is Arabidopsis-specific or general.
+#
+# Species chosen to match the project's own motivating examples:
+# - Arabidopsis thaliana (Q158695) - the pilot/reference species
+# - Camellia sinensis / tea (Q101815), Coffea arabica / coffee (Q47685),
+#   Theobroma cacao / cacao (Q42385) - the project's caffeine example
+#   (caffeine is biosynthesized by different enzymes in each)
+# - Brassica oleracea (Q146212), Brassica rapa (Q3384) - candidates for
+#   the glucosinolate-biosynthesis pilot (Objective 6)
+#
+# Run at https://query.wikidata.org/. Results (run 2026-11-21):
+#
+# | Taxon                | compounds | any P527 link   | genuine pathway |
+# |-----------------------|-----------|-----------------|------------------|
+# | Arabidopsis thaliana  | 1284      | 225  (17.5%)    | 118  (9.2%)      |
+# | Brassica oleracea     | 258       | 68   (26.4%)    | 46   (17.8%)     |
+# | Brassica rapa         | 281       | 61   (21.7%)    | 22   (7.8%)      |
+# | Camellia sinensis      | 713       | 114  (16.0%)    | 29   (4.1%)      |
+# | Coffea arabica         | 205       | 60   (29.3%)    | 25   (12.2%)     |
+# | Theobroma cacao        | 142       | 63   (44.4%)    | 34   (23.9%)     |
+#
+# Reading: genuine-pathway coverage stays under 24% for every species
+# tested, and under 10% for half of them. The gap in query 02 is not an
+# Arabidopsis artifact - it holds across every species checked so far.
+
+SELECT ?taxon ?taxonLabel
+       (COUNT(DISTINCT ?compound) AS ?compoundsTotal)
+       (COUNT(DISTINCT ?compoundAnyP527) AS ?compoundsAnyP527)
+       (COUNT(DISTINCT ?compoundRealPathway) AS ?compoundsRealPathway)
+WHERE {
+  VALUES ?taxon {
+    wd:Q158695   # Arabidopsis thaliana
+    wd:Q101815   # Camellia sinensis (tea)
+    wd:Q47685    # Coffea arabica (coffee)
+    wd:Q42385    # Theobroma cacao (cacao)
+    wd:Q146212   # Brassica oleracea
+    wd:Q3384     # Brassica rapa
+  }
+
+  ?compound wdt:P703 ?taxon .
+
+  OPTIONAL {
+    ?p1 wdt:P527 ?compound .
+    BIND(?compound AS ?compoundAnyP527)
+  }
+  OPTIONAL {
+    ?p2 wdt:P527 ?compound .
+    ?p2 wdt:P2410 ?wikipathwaysId .
+    BIND(?compound AS ?compoundRealPathway)
+  }
+
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+GROUP BY ?taxon ?taxonLabel
+ORDER BY ?taxonLabel

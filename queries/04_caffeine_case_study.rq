@@ -1,0 +1,44 @@
+# Case study, directly testing the project proposal's own motivating
+# example: "Caffeine, for example, evolved independently in coffee, tea
+# and cacao using different enzymes." Does Wikidata actually carry any
+# plant-side, taxon-specific caffeine biosynthesis pathway data?
+#
+# Query: every item linked to caffeine (Q60235) via P527 ("has part(s)"),
+# since that is the only property currently used as an (indirect,
+# overloaded - see query 01's notes) compound -> pathway link.
+#
+# Run at https://query.wikidata.org/. Result (run 2026-11-21): ~46
+# distinct items. None of them is a plant-specific caffeine biosynthesis
+# pathway. They are, instead:
+# - consumer products/drinks containing caffeine (Red Bull, Diet Pepsi,
+#   Cola Turka, BAWLS Guarana, tea (Q6097) itself as a drink, ...)
+# - drug combination products (aspirin/caffeine/codeine, etc.)
+# - human pharmacology/physiology pathways and GO-style activity terms
+#   (DNA damage response WP707, purinergic signaling WP4900, "response
+#   to caffeine", taste receptor ligand entries for TAS2R7/10/14/43/46)
+# - exactly ONE genuine WikiPathways-sourced metabolic pathway: "caffeine
+#   and theobromine metabolism" (Q28869950, WP3633). Checking its
+#   `found in taxon` qualifier (see below) shows it is tagged to
+#   Q15978631 = archaic Homo sapiens - i.e. HUMAN caffeine *catabolism*
+#   (via liver enzymes CYP2A6, CYP1A2, XDH, NAT2), not plant
+#   *biosynthesis* in any of coffee, tea or cacao.
+#
+# Conclusion: Wikidata currently has zero data distinguishing how
+# coffee, tea and cacao each biosynthesize caffeine - the project's own
+# headline example turns out to be empirically true, not hypothetical.
+
+SELECT DISTINCT ?pathway ?pathwayLabel ?wikipathwaysId WHERE {
+  ?pathway wdt:P527 wd:Q60235 .   # caffeine
+  OPTIONAL { ?pathway wdt:P2410 ?wikipathwaysId . }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+
+# Follow-up (run separately): check what the one genuine pathway found
+# above is actually taxon-qualified with.
+#
+# SELECT ?prop ?propLabel ?val ?valLabel WHERE {
+#   wd:Q28869950 ?p ?val .               # "caffeine and theobromine metabolism"
+#   ?prop wikibase:directClaim ?p .
+#   OPTIONAL { ?val rdfs:label ?valLabel . FILTER(LANG(?valLabel)="en") }
+#   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+# }
