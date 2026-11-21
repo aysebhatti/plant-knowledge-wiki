@@ -82,54 +82,68 @@ genomic position, 0 genes at all for the other 5 species checked, and
 effectively zero genuine enzyme-typed pathway participants. Filling this
 is plain data entry once sources exist, not a design problem.
 
-## Worked example A: caffeine biosynthesis (coffee, tea, cacao)
+## Worked example A: caffeine biosynthesis (coffee, tea, cacao) - implemented (Phase 1)
 
 This is the project's own headline motivating example, and gap analysis
 confirmed (query 04) that **zero** plant-side caffeine biosynthesis data
-exists in Wikidata today - the only genuine pathway linked to caffeine is
-tagged to archaic *Homo sapiens* (human caffeine catabolism), and no item
-for "caffeine biosynthesis" exists at all (checked via `wbsearchentities`,
-2026-11-21 - only scientific articles about it exist, not a pathway item).
+existed in Wikidata before this project - the only genuine pathway linked
+to caffeine is tagged to archaic *Homo sapiens* (human caffeine
+catabolism), and no item for "caffeine biosynthesis" existed at all
+(checked via `wbsearchentities`, 2026-11-21 - only scientific articles
+about it existed, not a pathway item).
 
-Illustrative statements under this pattern (none of this has been created
-on Wikidata - see "What's a design, not an edit" below):
+**Phase 1 is now live:** [caffeine biosynthesis (Q142235637)](https://www.wikidata.org/wiki/Q142235637),
+created and verified 2026-11-21, using decision 3's lighter-weight option
+(`has part(s)` + a role qualifier, P3831) rather than a new relational
+property:
 
 ```
-Item: "caffeine biosynthesis"  [NEW ITEM]
+Item: "caffeine biosynthesis"  [Q142235637 - LIVE]
   instance of -> biosynthetic pathway (Q70696303)
-  has part(s) -> theobromine (Q206844, existing compound)
+  has part(s) -> xanthosine (Q408788)
     qualifier: object of statement has role -> reaction intermediate (Q7458208)
-    qualifier: found in taxon -> Coffea arabica (Q47685)
-    qualifier: stated in -> [source publication per species]
-
-  [same base statement, different taxon qualifier - same pathway item,
-   same compound, different organism and potentially different
-   enzyme/gene downstream]
-  has part(s) -> theobromine
+    reference: stated in -> Q105208193
+  has part(s) -> 7-methylxanthine (Q27121426)
     qualifier: object of statement has role -> reaction intermediate
-    qualifier: found in taxon -> Camellia sinensis (Q101815)
-    qualifier: stated in -> [source publication]
-
-  has part(s) -> theobromine
+    reference: stated in -> Q105208193
+  has part(s) -> theobromine (Q206844)
     qualifier: object of statement has role -> reaction intermediate
-    qualifier: found in taxon -> Theobroma cacao (Q42385)
-    qualifier: stated in -> [source publication]
+    reference: stated in -> Q105208193
+  has part(s) -> caffeine (Q60235)
+    qualifier: object of statement has role -> product (Q542929)
+    reference: stated in -> Q105208193
 ```
 
-(Using decision 3's lighter-weight option - `has part(s)` + a role
-qualifier - rather than assuming a new relational property. If a
-dedicated compound -> pathway property is created later instead or in
-addition, see
-[`pathway-representation-proposal.md`](pathway-representation-proposal.md)'s
-"Open question" for how that would change this example.)
+Deliberately **no `found in taxon` qualifier** on these statements: the
+compound-level route (xanthosine -> 7-methylxanthine -> theobromine ->
+caffeine) is shared plant biochemistry, not something that differs
+between coffee, tea and cacao - the project's own "different enzymes per
+species" claim lives at the enzyme/gene level, not here. Adding taxon
+claims at this stage, without a per-species source for each, would have
+been an overclaim.
 
-The point this example makes concrete: the *compound* and *pathway* nodes
-are shared across all three species (correctly - it's the same
-biosynthetic route conceptually), but each species' *participation
-statement* carries its own taxon qualifier and, at the enzyme/gene level
-(not shown - would need verified gene identities per species, which this
-project has not sourced), would diverge per the project's own claim that
-different enzymes catalyze this in each plant.
+**Phase 2, not yet done:** the enzyme/gene level is where species
+actually diverge, and exactly where the gap analysis found Wikidata
+emptiest (zero genuine enzyme-typed pathway participants across all six
+species checked). Completing it means sourcing the real methyltransferase
+genes per species from the literature (e.g. coffee's XMT/MXMT/DXMT - a
+citable source already exists, Q28139580, "7-Methylxanthine
+methyltransferase of coffee plants"), checking whether a Wikidata gene
+item exists for each (unlikely per the gap analysis), and creating one
+with `found in taxon` (P703) and, where available, genomic position,
+linked via `encoded by` (P702) to the enzyme - which is where a
+per-statement taxon qualifier like the pattern below would actually apply
+and be truthful:
+
+```
+enzyme (e.g. theobromine synthase, coffee-specific)  [not yet created]
+  encoded by -> gene (e.g. CcDXMT1)  [not yet created]
+    qualifier: found in taxon -> Coffea arabica (Q47685)
+    qualifier: stated in -> [per-species source, e.g. Q28139580 for coffee]
+```
+
+This is literature research per species, not Wikidata editing alone, and
+remains open - see the project's Call to Action.
 
 ## Worked example B: a real PlantMetWiki pathway with no Wikidata counterpart yet
 
@@ -192,18 +206,21 @@ organism-independent process terms.
   [`pathway-representation-proposal.md`](pathway-representation-proposal.md),
   even though this project has chosen not to actually submit yet.
 
-## What's a design, not an edit
+## What's design-only, and what's now live
 
-Nothing in this document has been written to live Wikidata. Creating the
-"caffeine biosynthesis" or "nicotine biosynthesis" items, adding the
-`has part(s)` + role-qualifier statements, or editing the GO glucosinolate
-item are all real, public, permanent actions on a shared knowledge base -
-deliberately not taken here. This is a project decision (see
+Example A's **Phase 1** (the "caffeine biosynthesis" pathway item and its
+four compound statements) has been implemented:
+[Q142235637](https://www.wikidata.org/wiki/Q142235637), created and
+verified 2026-11-21 - this satisfies Deliverable 5's optional pilot, at
+the scope described above.
+
+Everything else remains design-only, deliberately not taken further yet:
+Example A's **Phase 2** (per-species enzyme/gene statements), Example B's
+"nicotine biosynthesis" item, and Example C's GO-glucosinolate edit. This
+is a project decision (see
 [`pathway-representation-proposal.md`](pathway-representation-proposal.md)'s
-status note), not a blocked or pending step. This document satisfies
-Deliverable 3 (the pattern + worked examples) and sketches what
-Deliverable 5's optional pilot would look like; actually carrying out
-Deliverable 5 would be a separate, later decision.
+status note on the property proposal specifically), not a blocked or
+pending step - each would be a separate, later decision.
 
 ## What's left
 
@@ -211,8 +228,8 @@ Deliverable 5 would be a separate, later decision.
   PlantMetWiki *identifier* property) is still an open property proposal -
   harder to scope than an external ID, and not drafted in this round.
 - Verified gene/enzyme identities per species for the caffeine example
-  (would need literature sourcing, not done here - avoided asserting
-  specific gene names without verification).
+  (Phase 2 above) - would need literature sourcing, not done here -
+  avoided asserting specific gene names without verification.
 - The GO-term/WikiPathways-style "corresponds to" linking convention
   mentioned in Example C needs a short survey of how other Wikidata items
   already do this before standardizing it here.

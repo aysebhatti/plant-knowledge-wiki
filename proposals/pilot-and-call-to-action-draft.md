@@ -1,13 +1,12 @@
 # Pilot section and Call to Action drafts (for the Wikidata project page)
 
-**Written for:** readers of the course project page (same audience as
-`results-section-draft.md`). Two wikitext blocks below, meant to be
-pasted in once Phase 1 is actually run (see
-`pilot-phase1-implementation.md`).
-
-**Before pasting the Pilot section:** replace every `Q_NEW` placeholder
-with the real QID QuickStatements (or the manual UI) gives you after
-running Phase 1.
+**Superseded:** Phase 1 has been implemented
+([Q142235637](https://www.wikidata.org/wiki/Q142235637), 2026-11-21,
+verified correct), and the text below has been merged - with the real
+QID filled in - into
+[`results-section-draft.md`](results-section-draft.md), which is now the
+single, current source for what to paste into the project page's Results
+section. This file is kept for history; don't paste from it directly.
 
 ---
 

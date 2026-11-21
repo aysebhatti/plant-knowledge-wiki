@@ -2,11 +2,21 @@
 
 **Status:** a design reflection, not a submission. Nothing here has been
 posted to [Wikidata:Property proposal](https://www.wikidata.org/wiki/Wikidata:Property_proposal),
-and no live Wikidata edits have been made. This is a project decision,
+and no community discussion has been opened. This is a project decision,
 not a pending TODO: the aim of this document is to leave a clear,
 well-reasoned trail for whoever picks this up next (possibly this project
 continuing, possibly another course participant), not to take the action
 itself.
+
+**One piece of this reflection has since been tested in practice:** piece
+2 below (role-qualifying `has part(s)` with P3831 instead of a new
+property) is now live on one real item,
+[caffeine biosynthesis (Q142235637)](https://www.wikidata.org/wiki/Q142235637)
+(the modelling pattern's Example A, Phase 1 - see
+[`modelling-pattern.md`](modelling-pattern.md)). This doesn't change the
+property-proposal decision above - piece 1 (the PlantMetWiki identifier)
+is still unsubmitted - but it does mean piece 2 is no longer purely
+hypothetical.
 
 This document fulfills Deliverable 4's *design* half ("at least one
 formal property proposal with full justification [and] examples") while

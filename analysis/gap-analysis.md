@@ -316,6 +316,21 @@ for the full reflection this fed into - framed around representing the
 whole chain, not just this one identifier, and explicitly not submitted
 or implemented (project decision).
 
+## Pilot, Phase 1: the pattern tested in practice
+
+The modelling pattern's role-qualifier option (above and in
+[`proposals/modelling-pattern.md`](../proposals/modelling-pattern.md))
+has since been implemented on one real item:
+[caffeine biosynthesis (Q142235637)](https://www.wikidata.org/wiki/Q142235637),
+created and verified 2026-11-21. It carries `instance of` "biosynthetic
+pathway" (Q70696303) and four `has part(s)` statements (xanthosine ->
+7-methylxanthine -> theobromine -> caffeine), each qualified with
+`object of statement has role` (reaction intermediate / product) and
+referenced to a general caffeine-biosynthesis mechanism paper -
+deliberately with no taxon qualifier yet, since the compound route itself
+doesn't differ between species (see the modelling pattern document for
+why, and for the Phase 2 enzyme/gene work this doesn't yet cover).
+
 ## Still open / not yet checked
 
 - `stated in` (P248) does **not** point to Q104225190 ("LOTUS, natural

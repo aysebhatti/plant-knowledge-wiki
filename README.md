@@ -71,17 +71,19 @@ visualizations) have a first draft:
    specific pathway/gene data), and an empirically-confirmed case study
    (caffeine in coffee/tea/cacao).
 3. **Modelling pattern** - [`proposals/modelling-pattern.md`](proposals/modelling-pattern.md):
-   5 design decisions and 3 worked examples (none implemented on live
-   Wikidata yet - see that file's "What's a design, not an edit" section).
+   5 design decisions and 3 worked examples. Example A's Phase 1 is now
+   **live**: [caffeine biosynthesis (Q142235637)](https://www.wikidata.org/wiki/Q142235637) -
+   see that file's "What's design-only, and what's now live" section.
 4. **Property proposal / chain-representation reflection** -
    [`proposals/pathway-representation-proposal.md`](proposals/pathway-representation-proposal.md):
    a PlantMetWiki pathway ID property sketch, plus a lighter-weight
    role-qualifier alternative that needs no new property at all. By
    project decision, **not submitted** to Wikidata:Property proposal and
    no community discussion has been opened.
-5. **Pilot** (optional) - designed as worked examples in the modelling
-   pattern document; by project decision, **not implemented** as live
-   Wikidata edits.
+5. **Pilot** (optional) - **Phase 1 implemented** (the caffeine
+   biosynthesis pathway item above). Phase 2 (per-species enzyme/gene
+   data) remains open - see the modelling pattern document and the
+   project's Call to Action.
 6. **Visualizations** (added from reviewer feedback) - [`notebooks/gap_visualizations.ipynb`](notebooks/gap_visualizations.ipynb).
 
 Still open: the crosswalk to PlantMetWiki/ChEBI/Plant Ontology/Rhea/EC
