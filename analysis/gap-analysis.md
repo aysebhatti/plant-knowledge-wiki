@@ -363,6 +363,90 @@ deliberately with no taxon qualifier yet, since the compound route itself
 doesn't differ between species (see the modelling pattern document for
 why, and for the Phase 2 enzyme/gene work this doesn't yet cover).
 
+## Crosswalk (Objective 2): first pass
+
+Run 2026-11-21/22. Where relevant, the chemical-class filter from
+[`03_arabidopsis_chemical_class_filter.rq`](../queries/03_arabidopsis_chemical_class_filter.rq) is applied.
+
+### Which resources have a Wikidata property?
+
+| Resource | Wikidata property | Notes |
+|---|---|---|
+| ChEBI | P683 (ChEBI ID) | |
+| EC | P591 (EC enzyme number, string), P660 (EC enzyme classification, item) | Do not confuse with P232 "EC number" = European Community (EINECS) number for chemicals |
+| WikiPathways | P2410 (WikiPathways ID) | |
+| Plant Ontology | P13866 (Plant Ontology ID) | Stored without the `PO:` prefix, e.g. `0030103` |
+| Rhea | none found | English-label search only |
+| PlantMetWiki | none found | see property proposal candidate above |
+
+### Coverage (Arabidopsis thaliana, Q158695)
+
+| Link | Count |
+|---|---|
+| Chemicals with ChEBI ID (P683) | 568 / 1013 (56.1%) |
+| Chemicals linked to a WikiPathways pathway (P527 + P2410) | 118 / 1013 (11.6%) |
+| Arabidopsis items with an EC number (P591) | **0** |
+| Items with a Plant Ontology ID (P13866), all of Wikidata | **1** (drupe, Q14712) |
+
+### EC numbers on proteins are human-centric
+
+Items with P591, grouped by `instance of`: molecular function (5197),
+group or class of enzymes (5018), protein (3763), protein family (263),
+enzyme (25), ... Of the 3763 proteins, **3714 (~99%)** are `found in taxon`
+Homo sapiens (Q15978631). The only plant in the top 20 taxa is
+*Carica papaya* (2 proteins). No Arabidopsis item carries an EC number.
+
+### Data-quality noise
+
+P591 also appears on items that are not enzymes: failed hypothesis (4),
+type of chemical entity (5), carbohydrate (3), mixture (1),
+Wikimedia disambiguation page (1).
+
+**Reading:** chemical identity is moderately well cross-referenced
+(ChEBI, 56%), but every link further down the chain (pathway, enzyme
+EC number, plant anatomy) is sparse or absent for plants. EC annotation
+on specific proteins is almost entirely human, which mirrors the
+taxon-specificity issue above: the biochemistry in Wikidata is
+human-centric, not plant-specific.
+
+<details>
+<summary>Queries used</summary>
+
+```sparql
+# ChEBI coverage of Arabidopsis chemicals
+SELECT (COUNT(DISTINCT ?c) AS ?chemicalsTotal) (COUNT(DISTINCT ?cChebi) AS ?withChEBI) WHERE {
+  VALUES ?class { wd:Q113145171 wd:Q59199015 wd:Q15711994 wd:Q11173 wd:Q56256173 }
+  ?c wdt:P703 wd:Q158695 ; wdt:P31 ?class .
+  OPTIONAL { ?c wdt:P683 ?chebi . BIND(?c AS ?cChebi) }
+}
+
+# Items carrying an EC number, by class
+SELECT ?class ?classLabel (COUNT(DISTINCT ?x) AS ?n) WHERE {
+  ?x wdt:P591 ?ec .
+  OPTIONAL { ?x wdt:P31 ?class . }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+} GROUP BY ?class ?classLabel ORDER BY DESC(?n)
+
+# Proteins with an EC number, by taxon
+SELECT ?taxon ?taxonLabel (COUNT(DISTINCT ?x) AS ?n) WHERE {
+  ?x wdt:P591 ?ec ; wdt:P31 wd:Q8054 ; wdt:P703 ?taxon .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+} GROUP BY ?taxon ?taxonLabel ORDER BY DESC(?n) LIMIT 20
+
+# Arabidopsis items with an EC number (returns 0 rows)
+SELECT ?x ?xLabel ?ec WHERE {
+  ?x wdt:P591 ?ec ; wdt:P703 wd:Q158695 .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+
+# Items with a Plant Ontology ID (returns 1 row)
+SELECT ?x ?xLabel ?po WHERE {
+  ?x wdt:P13866 ?po .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+```
+</details>
+
 ## Still open / not yet checked
 
 - `stated in` (P248) does **not** point to Q104225190 ("LOTUS, natural
@@ -373,7 +457,7 @@ why, and for the Phase 2 enzyme/gene work this doesn't yet cover).
   during the full domain survey (Objective 1) - may need to check edit
   history / dump metadata rather than live statement RDF.
 - Crosswalk to PlantMetWiki, ChEBI, Plant Ontology, Rhea, EC (Objective 2) -
-  not started.
+  first pass done, see Crosswalk section above.
 - Federated queries against PlantMetWiki/WikiPathways (as opposed to just
   querying Wikidata's local copies of WikiPathways IDs) - not started.
 - The full chain (compound -> pathway -> enzyme -> gene -> genome) has now
